@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Home</title>
+    <link type="text/css" rel="stylesheet" href="/css/home.css">
+</head>
+  <body>
+    <div class="container">
+        <h2>Donation: </h2><br>
+      <% for(var i=0;i<data[0].donation.length;i++){ %>
+        <div class="small-div" >
+          <a href="/profile/<%=data[0].donation[i].name%>" >
+          <div class="upp">
+            <div class="images">
+              <img src="<%= data[0].donation[i].src%>" alt="">
+            </div>
+            <div class="owners-info">
+              <h3>Owner:<%=data[0].donation[i].onwer%></h3>
+            </div>
+          </div>
+          <div class="upp">
+            <div class="name">
+              <span><%=data[0].donation[i].name%></span>
+            </div>
+          </a>
+          </div>
+
+        </div>
+        <% } %>
+        <h2>Requests: </h2><br>
+        <% for(var i=0;i<data[1].requests.length;i++){ %>
+          <div class="requests">
+            <div class="image">
+              <img src="/src/icon.jpg" alt="">
+              <div class="info">
+                <span ><%=data[1].requests[i].name%></span>
+                <span ><%=data[1].requests[i].book%></span>
+              </div>
+              <div class="hidari">
+                <a href="/confirmation/<%=data[1].requests[i].book%>">Donate</a>
+              </div>
+            </div>
+
+          </div>
+          <% } %>
+
+    </div>
+  </body>
+</html>
