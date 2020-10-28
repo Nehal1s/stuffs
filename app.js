@@ -1,7 +1,22 @@
+
 var express = require('express'),
     app = express(),
     chalk = require('chalk'),
-    bodyparser = require('body-parser');
+    cors = require('cors');
+    bodyparser = require('body-parser'),
+    encryhash = require('./public/js/hashing.js'),
+    passport = require('passport'),
+    cookieSession = require('cookie-session'),
+    {donation, requests, users, me} = require('./public/js/database.js');
+// const MongoClient = require('mongodb').MongoClient,
+//       uri = "mongodb+srv://kaneki:<password>@cluster0.scsrk.mongodb.net/<dbname>?retryWrites=true&w=majority",
+//       client = new MongoClient(uri, { useNewUrlParser: true });
+//       client.connect(err => {
+//       collection = client.db("test").collection("devices");
+//       // perform actions on the collection object
+//       client.close();
+//     });
+require('./public/js/passport');
 
 var prin = {
   server : "Low Left",
@@ -11,148 +26,148 @@ var prin = {
   Status: "Online",
   TimeoutRecap: 2424
 }
-var donation = [
-  {
-    name: "Kafka on the shoer",
-    onwer: "Nehal",
-    src: '/src/image.jpg'
-  },{
-    name: "Kafka on the shoer",
-    onwer: "Paankaj",
-    src: '/src/image1.jpg'
-  },{
-    name: "Kafka on the shoer",
-    onwer: "Anynomous",
-    src: '/src/image2.jpg'
-  },{
-    name: "Kafka on the shoer",
-    onwer: "Doolen",
-    src: '/src/image3.jpg'
-  },{
-    name: "Down Town",
-    onwer: "Nehal",
-    src: '/src/image4.jpg'
-  },{
-    name: "Boy with broken heart",
-    onwer: "yasaru",
-    src: '/src/image5.jpg'
-  },{
-    name: "Boy who loved",
-    onwer: "paku",
-    src: '/src/image6.jpg'
-  }
-]
-var requests = [
-  {
-    name: "Atul",
-    book: "The Lord of the Rings Trilogy",
-    distance: "green",
-  },{
-    name: "Madhav",
-    book: "The Count of Monte Cristo",
-    distance: "green",
-  },{
-    name: "The_sport",
-    book: "A Game of Thrones",
-    distance: "red",
-  },{
-    name: "One_above_all",
-    book: "To Kill a Mockingbird",
-    distance: "orange",
-  },{
-    name: "bookWorm",
-    book: "The Little Prince",
-    distance: "green",
-  },{
-    name: "scribbled",
-    book: "Siddhartha",
-    distance: "green",
-  },{
-    name: "MAyank",
-    book: "The Girl with the Dragon Tattoo",
-    distance: "red",
-  },{
-    name: "Patidarr",
-    book: "The Alchemist",
-    distance: "orange",
-  },{
-    name: "Nehal",
-    book: "To Kill a Mockingbird",
-    distance: "green",
-  },{
-    name: "The_Winchi",
-    book: "The Count of Monte Cristo",
-    distance: "orange",
-  },{
-    name: "The_wahh",
-    book: "Americanah",
-    distance: "green",
-  },{
-    name: "NookNerd",
-    book: "The Secret Life of Bees",
-    distance: "orange",
-  },{
-    name: "Nerd_dude",
-    book: "The Kite Runner",
-    distance: "green",
-  },
-]
-// var books = ['','','download.jpg','download(1).jpg','download(2).jpg','download(3).jpg''download(4).jpg'];
-var me ={
-  name: 'kaneki',
-  books : ['yppp','asd','asddgdfg'],
-  points: 4,
-  recieved: 2,
-  donated: 2,
-  donate_books: ['the girl leape through time'],
-}
+
+
+
+// -----------usess----------//
 
 
 app.use(express.static(__dirname + '/public'));
+
 app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.json());
+
+app.use(cors())
+app.use(cookieSession({
+    name: 'tuto-session',
+    keys: ['key1', 'key2']
+  }))
+
+
+  const isLoggedIn = (req, res, next) => {
+      if (req.user) {
+          next();
+      } else {
+          res.redirect('/login');
+      }
+  }
+
+
+  app.use(passport.initialize());
+  app.use(passport.session());
+// -------------Routes--------------//
+
+
+
+app.get('/failed', (req, res) => res.send('You Failed to log in!'))
+
+app.get('/profile', isLoggedIn, (req, res) =>{
+  me.name = req.user.displayName;
+  res.render('profile.ejs',{data:me});
+})
+
+// Auth Routes
+app.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/google/register', passport.authenticate('google', { failureRedirect: '/failed' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/profile');
+  }
+);
+
+app.get('/logout', (req, res) => {
+    req.session = null;
+    req.logout();
+    res.redirect('/');
+})
+
+
 //home
 app.get('/',(req,res)=>{
-  // res.send("<h1>this is home</h1>");
   var data = [
-    donation,requests
+    {
+      donation: donation,
+    },{
+      requests: requests,
+    }
   ];
-  console.log(data[0].donation);
   res.render('home.ejs',{data: data});
 });
+
 //login
 app.get('/login',(req,res)=>{
-  res.send("<h1>this is login</h1>");
+  res.render('login.ejs');
 });
+
 //profile
 app.get('/profile/:name',(req,res)=>{
   if (me.points >0) {
     me.recieved += 1;
     me.points -= 1;
     me.books.push(req.params.name);
+    res.render('profile.ejs',{data:me});
   }else{
     console.log(chalk.red("You do not hve enough points! Want to buys some go to store"));
     res.send("You do not hve enough points! Want to buys some go to store");
   }
-  res.render('profile.ejs',{dona:me});
+
 });
+
 //confirmation
 app.get('/confirmation/:name',(req,res)=>{
-  console.log(req.params.name);
+  if(me.points>=5){
+    res.send('Your points reached 5 in total. You cannot donate books. If you plan to donate books you need clear your points first.... ');
+  }else {
+    if(me.donate_books.push(req.params.name)){
+      res.send('you have donated a book, thankyou .....');
+      me.points +=1;
+      console.log(me.points);
+    }else{
+      res.send('something went wrong, pls try again later. If the problem persist mae sure to contact us...');
+    }
+  }
   // console.log(me);
 });
 //Success
-app.get('/Success',(req,res)=>{
+app.get('/Success',(req, res)=>{
   res.send("<h1>this is Success</h1>");
 });
 //donate
-app.get('/donate',(req,res)=>{
+app.get('/donate',(req, res)=>{
+
   res.render('donate.ejs')
 });
 
 
+// -------------Auths-------------//
+// Auth Routes
+
+
+
+
+
+
+
 //-------------Posts------------------//
 // //login
-// app.post('/login',(req,res)=>{});
+app.post('/login',(req,res)=>{
+  for(var i=0;i<users.length;i++){
+    if(users[i].user == req.body.user){
+      console.log(users[i].pass + ":" + encryhash(req.body.pass.toLowerCase()) + ":");
+      if(users[i].pass == encryhash(req.body.pass.toLowerCase())){
+        res.send('logged in');
+        console.log('logged in');
+        console.log(user[i].pass+ " : " + encryhash(req.body.pass));
+      }else {
+        res.send('failed');
+      }
+    }else{
+      res.send('failed');
+      console.log('failed');
+    }
+  }
+});
 //donate
 app.post('/donate',(req,res)=>{
   if(me.points>=5){
@@ -167,10 +182,12 @@ app.post('/donate',(req,res)=>{
     }
   }
 });
+//sing up
+
 //confirmation
 // app.post();
 
-app.listen(3000, ()=>{
+app.listen(8080, ()=>{
   console.log(chalk.green("server at 3000....."));
   console.log(prin);
 })
