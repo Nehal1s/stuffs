@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="test1.css">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="middle">
+        <img src="panic.jpg" alt="">
+    </div>
+    <div class="loader">
+        <img src="itachi.jpg" alt="">
+    </div>
+    <script>
+        $(window).on("load",function(){
+        setTimeout(function(){
+            $(".loader").fadeOut("slow");
+            setTimeout(function(){ 
+            $('.middle').fadeIn('slow').css('display', 'flex') }, 1000);
+        }, 3000)
+     
+    });
+    </script>
+</body>
+</html>
