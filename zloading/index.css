@@ -1,0 +1,100 @@
+body {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff200;
+  height: 100vh;
+}
+.container .damn {
+  position: relative;
+  width: 10vw;
+  height: 10vw;
+  background: #fff200;
+  border-radius: 0.5vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container .damn .cube {
+  width: 50%;
+  height: 50%;
+  position: absolute;
+  border: 5px solid;
+  border-radius: 50%;
+}
+.container .damn .outer {
+  width: 65%;
+  height: 65%;
+  animation: anime 3s linear infinite forwards;
+  border-right-color: #003b64;
+  border-left-color: #003b64;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+@keyframes anime {
+  12.5% {
+    transform: rotate(90deg) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(0.7);
+  }
+  37.5% {
+    transform: rotate(180deg) scale(0.7);
+  }
+  50% {
+    transform: rotate(180deg) scale(1);
+  }
+  62.5% {
+    transform: rotate(270deg) scale(1);
+  }
+  75% {
+    transform: rotate(270deg) scale(0.7);
+  }
+  87.5% {
+    transform: rotate(360deg) scale(0.7);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+.container .damn .inner {
+  animation: anime1 3s linear infinite forwards;
+  border-right-color: transparent;
+  border-left-color: transparent;
+  border-top-color: #003b64;
+  border-bottom-color: #003b64;
+}
+@keyframes anime1 {
+  12.5% {
+    transform: rotate(-90deg) scale(1);
+  }
+  25% {
+    transform: rotate(-90deg) scale(1.3);
+  }
+  37.5% {
+    transform: rotate(-180deg) scale(1.3);
+  }
+  50% {
+    transform: rotate(-180deg) scale(1);
+  }
+  62.5% {
+    transform: rotate(-270deg) scale(1);
+  }
+  75% {
+    transform: rotate(-270deg) scale(1.3);
+  }
+  87.5% {
+    transform: rotate(-360deg) scale(1.3);
+  }
+  100% {
+    transform: rotate(-360deg) scale(1);
+  }
+}
+
+/*# sourceMappingURL=index.css.map */
